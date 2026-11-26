@@ -62,10 +62,10 @@ deterministic tie-breaker.
 ## v1.0/v1.1 absorption
 
 v1.0 stores opening on v1.2 are migrated by store.py: locked rows
-become `user_stated`, correction rows become `user_corrected`,
-everything else stays `unknown`. The `unknown` origin is treated as
-the same precedence class as `document_recent`, preserving v1.0.1
-tie-breaker behaviour for un-tagged content.
+become `user_stated`, and everything else stays `unknown`. A
+correction row keeps `unknown` (#2013). The `unknown` origin is
+treated as the same precedence class as `document_recent`, preserving
+v1.0.1 tie-breaker behaviour for un-tagged content.
 
 ## When this fires
 
@@ -204,8 +204,8 @@ def precedence_class(belief: Belief) -> int:
       2. Origin string maps directly to its class for the explicit
          origins set by v1.2+ producers.
       3. Legacy fallback: type=correction maps to user_corrected
-         (covers correction beliefs whose origin is still 'unknown'
-         pre-backfill on a v1.0/v1.1 store).
+         (covers correction beliefs whose origin is 'unknown'; since
+         #2013 the backfill and `aelf migrate` leave that origin as is).
       4. Anything else (origin in {document_recent, unknown,
          agent_remembered}) maps to document_recent. Honest 'don't
          know' bucket; preserves v1.0.1 absorption.
